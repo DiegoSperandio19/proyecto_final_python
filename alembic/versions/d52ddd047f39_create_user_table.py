@@ -25,6 +25,7 @@ def upgrade() -> None:
         sa.Column('email', sa.String(), nullable=False, unique=True),
         sa.Column('hashed_password', sa.String(), nullable=False),
         sa.Column('name', sa.String(), nullable=False)
+        sa.Column('role', sa.String(), nullable=False, default='client')
     )
 
 
