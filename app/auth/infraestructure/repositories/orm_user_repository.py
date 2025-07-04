@@ -25,7 +25,7 @@ class SQLUserRepository(UserRepository):
         
 
     def add_user(self, user: User) -> User:
-        db_user = UserModel(email=user.email, hashed_password=user.hashed_password, name=user.name)
+        db_user = UserModel(email=user.email, hashed_password=user.hashed_password, name=user.name, role=user.role.value)
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
