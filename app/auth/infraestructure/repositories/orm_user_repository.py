@@ -1,5 +1,6 @@
 from uuid import UUID
-from sqlmodel import Session, select
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import select
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.user_repository import UserRepository
 from app.auth.infraestructure.models.user_model import UserModel
@@ -7,7 +8,7 @@ from app.auth.infraestructure.models.user_model import UserModel
 
 class SQLUserRepository(UserRepository):
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.db = session
 
     async def get_user_by_id(self, user_id: UUID) -> None | User:
@@ -18,7 +19,8 @@ class SQLUserRepository(UserRepository):
 
     async def get_user_by_email(self, user_email: str) -> None | User:
         statement = select(UserModel).where(UserModel.email == user_email)
-        user= await self.db.exec(statement).first()
+        result= await self.db.exec(statement)
+        user=result.first()
         if not user:
             return None
         return User.model_validate(user)

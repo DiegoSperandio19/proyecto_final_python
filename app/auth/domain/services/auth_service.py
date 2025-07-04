@@ -10,7 +10,7 @@ class AuthService:
         self.user_repo = user_repo
 
     async def register_new_user(self, user_data: UserCreate) -> User:
-        existing_user = await self.user_repo.get_by_email(email=user_data.email)
+        existing_user = await self.user_repo.get_user_by_email(user_data.email)
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
