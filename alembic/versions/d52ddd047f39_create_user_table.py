@@ -25,8 +25,8 @@ def upgrade() -> None:
         sa.Column('email', sa.String(), nullable=False, unique=True),
         sa.Column('hashed_password', sa.String(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
-        sa.Column('role_id', sa.Uuid(), nullable=False, foreign_key='role.id'),
-        sa.ForeignKeyConstraint(['role_id'], ['role.id'])
+        sa.Column('role_id', sa.Uuid(), nullable=False),
+        sa.ForeignKeyConstraint(['role_id'], ['role.id'],name="FK:roles")
     )
 
 def downgrade() -> None:

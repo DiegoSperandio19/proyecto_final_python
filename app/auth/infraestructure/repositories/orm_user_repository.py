@@ -28,7 +28,7 @@ class SQLUserRepository(UserRepository):
         
 
     async def add_user(self, user: User) -> User:
-        db_user = UserModel(email=user.email, hashed_password=user.hashed_password, name=user.name, role=user.role.value)
+        db_user = UserModel(email=user.email, hashed_password=user.hashed_password, name=user.name, role_id=user.role.id)
         self.db.add(db_user)
         await self.db.commit()
         await self.db.refresh(db_user)

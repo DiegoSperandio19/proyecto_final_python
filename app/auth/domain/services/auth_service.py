@@ -1,14 +1,16 @@
 from fastapi import HTTPException, status
 
 from app.auth.domain.entities.user_entity import User
+from app.auth.domain.repositories.role_repository import RoleRepository
 from app.auth.domain.repositories.user_repository import UserRepository
 from app.auth.domain.value_objects.user_dto import UserCreate
 from app.auth.infraestructure.utils import auth_utils
 
 
 class AuthService:
-    def __init__(self, user_repo: UserRepository):
+    def __init__(self, user_repo: UserRepository, role_repo: RoleRepository):
         self.user_repo = user_repo
+        self.role__repo = role_repo
 
     async def register_new_user(self, user_data: UserCreate) -> User:
         existing_user = await self.user_repo.get_user_by_email(user_data.email)
@@ -20,10 +22,13 @@ class AuthService:
 
         hashed_password = auth_utils.get_password_hash(user_data.password)
 
+        role= await self.role__repo.get_role_by_name(role_name="client")
+
         user_entity = User(
             email=user_data.email,
             hashed_password=hashed_password,
-            name=user_data.name
+            name=user_data.name,
+            role=role
         )
 
         return await self.user_repo.add_user(user=user_entity)
