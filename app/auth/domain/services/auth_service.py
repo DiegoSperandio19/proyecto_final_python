@@ -1,7 +1,8 @@
 from fastapi import HTTPException, status
-from app.auth.api.dto.user_dto import UserCreate
+
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.user_repository import UserRepository
+from app.auth.domain.value_objects.user_dto import UserCreate
 from app.auth.infraestructure.utils import auth_utils
 
 

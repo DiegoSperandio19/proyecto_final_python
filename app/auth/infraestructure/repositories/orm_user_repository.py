@@ -3,7 +3,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.user_repository import UserRepository
-from app.auth.infraestructure.models.user_model import UserModel
+from app.auth.infraestructure.orm_entities.user_model import UserModel
+
 
 
 class SQLUserRepository(UserRepository):
