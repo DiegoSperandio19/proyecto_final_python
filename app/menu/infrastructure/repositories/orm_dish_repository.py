@@ -35,3 +35,7 @@ class SQLDishRepository(DishRepository):
             category=dish.category,
             restaurant_id=dish.restaurant_id
         )
+        self.db.add(db_dish)
+        await self.db.commit()
+        await self.db.refresh(db_dish)
+        return Dish.model_validate(db_dish)
