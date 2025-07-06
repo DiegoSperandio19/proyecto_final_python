@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from pydantic import EmailStr
 
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.role_repository import RoleRepository
@@ -12,12 +13,18 @@ class AuthService:
         self.user_repo = user_repo
         self.role__repo = role_repo
 
+    def get_user_by_id(self, user_id: str) -> User | None:
+        return self.user_repo.get_user_by_id(user_id)
+    
+    def get_user_by_email(self, user_email: str) -> User | None:
+        return self.user_repo.get_user_by_email(user_email)
+
     async def register_new_user(self, user_data: UserCreate) -> User:
         existing_user = await self.user_repo.get_user_by_email(user_data.email)
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El email ya está registrado.",
+                detail="El email ya está registrado",
             )
 
         hashed_password = auth_utils.get_password_hash(user_data.password)
@@ -32,3 +39,11 @@ class AuthService:
         )
 
         return await self.user_repo.add_user(user=user_entity)
+    
+    async def authenticate_user(self, email: EmailStr, password: str) -> User | None:
+        user = await self.user_repo.get_user_by_email(email)
+        if not user:
+            return None
+        if not auth_utils.verify_password(password, user.hashed_password):
+            return None
+        return user

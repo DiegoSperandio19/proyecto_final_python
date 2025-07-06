@@ -1,8 +1,11 @@
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import joinedload
 from sqlmodel import select
+from app.auth.domain.entities.role_entity import Role
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.user_repository import UserRepository
+from app.auth.infraestructure.orm_entities.role_model import RoleModel
 from app.auth.infraestructure.orm_entities.user_model import UserModel
 
 
@@ -13,18 +16,50 @@ class SQLUserRepository(UserRepository):
         self.db = session
 
     async def get_user_by_id(self, user_id: UUID) -> None | User:
-        user= await self.db.get(UserModel, user_id)
+        statement = select(UserModel, RoleModel).join(RoleModel).where(UserModel.id == user_id)
+        result= await self.db.exec(statement)
+        row = result.first()
+        user_model = row[0] 
+        role_model = row[1] 
+        role = Role(
+            id=role_model.id,
+            name=role_model.name,
+            scopes=role_model.scopes
+        )
+        user = User(
+            id=user_model.id,
+            email=user_model.email,
+            hashed_password=user_model.hashed_password,
+            name=user_model.name,
+            role=role
+        )
         if not user:
             return None
-        return User.model_validate(user)
+        return user
 
     async def get_user_by_email(self, user_email: str) -> None | User:
-        statement = select(UserModel).where(UserModel.email == user_email)
+        statement = select(UserModel, RoleModel).join(RoleModel).where(UserModel.email == user_email)
         result= await self.db.exec(statement)
-        user=result.first()
+        row = result.first()
+        if row is None:
+            return None
+        user_model = row[0] 
+        role_model = row[1] 
+        role = Role(
+            id=role_model.id,
+            name=role_model.name,
+            scopes=role_model.scopes
+        )
+        user = User(
+            id=user_model.id,
+            email=user_model.email,
+            hashed_password=user_model.hashed_password,
+            name=user_model.name,
+            role=role
+        )
         if not user:
             return None
-        return User.model_validate(user)
+        return user
         
 
     async def add_user(self, user: User) -> User:
