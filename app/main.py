@@ -43,18 +43,3 @@ app = get_app()
 @app.get("/")
 async def read_root():
     return {"message": "Hello World from FastAPI!"}
-
-@app.post("/")
-async def add_client(user_create: UserCreate, session: AsyncSession = Depends(get_session)):
-    user_repo = SQLUserRepository(session)
-    role_repo = SQLRoleRepository(session)
-    auth_service = AuthService(user_repo, role_repo)
-    return await auth_service.register_new_user(user_create)
-
-@app.get("/{client_id}")
-async def get_client(client_id, session: AsyncSession = Depends(get_session)):
-    user_repo = SQLUserRepository(session)
-    return await user_repo.get_user_by_id(client_id)
-    ##role_repo = SQLRoleRepository(session)
-    #auth_service = AuthService(user_repo, role_repo)
-    #return await auth_service.register_new_user(user_create)

@@ -38,6 +38,7 @@ async def login_for_acces_token(form_data: Annotated[OAuth2PasswordRequestForm, 
     )
     return Token(access_token=acces_token, token_type="bearer")
 
+#PRUEBA TEMPORAL
 @auth_router.post("/user")
 async def crear_user(
     user_create: UserCreate,
