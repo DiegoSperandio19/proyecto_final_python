@@ -5,6 +5,7 @@ from sqlmodel import select
 from app.auth.domain.entities.role_entity import Role
 from app.auth.domain.entities.user_entity import User
 from app.auth.domain.repositories.user_repository import UserRepository
+from app.auth.domain.value_objects.user_dto import UserUpdate
 from app.auth.infraestructure.orm_entities.role_model import RoleModel
 from app.auth.infraestructure.orm_entities.user_model import UserModel
 
@@ -68,3 +69,15 @@ class SQLUserRepository(UserRepository):
         await self.db.commit()
         await self.db.refresh(db_user)
         return User.model_validate(db_user)
+    
+    async def update_user(self, user: User) -> User:
+        db_user = await self.db.get(UserModel, user.id)
+
+        db_user.email = user.email
+        db_user.hashed_password = user.hashed_password
+        db_user.name = user.name
+        self.db.add(db_user)
+        await self.db.commit()
+        await self.db.refresh(db_user)
+
+        return await self.get_user_by_id(db_user.id)

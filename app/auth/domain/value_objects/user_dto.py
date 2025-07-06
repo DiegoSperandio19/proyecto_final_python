@@ -7,6 +7,11 @@ class UserCreate(BaseModel):
     password: str    
     name: str
 
+class UserUpdate(BaseModel):
+    new_email: EmailStr | None=None
+    new_password: str | None=None
+    new_name: str | None=None
+
 class UserOut(BaseModel):
     id: UUID
     email: EmailStr
