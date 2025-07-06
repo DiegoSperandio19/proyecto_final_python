@@ -20,6 +20,8 @@ class SQLUserRepository(UserRepository):
         statement = select(UserModel, RoleModel).join(RoleModel).where(UserModel.id == user_id)
         result= await self.db.exec(statement)
         row = result.first()
+        if row is None:
+            return None
         user_model = row[0] 
         role_model = row[1] 
         role = Role(
