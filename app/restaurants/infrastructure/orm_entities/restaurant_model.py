@@ -11,4 +11,5 @@ class RestaurantModel(SQLModel, table=True):
     name: str =Field(nullable=False, unique=True)
     location: str =Field(nullable=False)
     opening_time: time =Field(nullable=False)
-    opening_time: time =Field(nullable=False)
+    closing_time: time =Field(nullable=False)
+    is_eliminated: bool =Field(nullable=False)

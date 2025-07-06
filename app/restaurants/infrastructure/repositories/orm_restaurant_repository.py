@@ -19,17 +19,18 @@ class SQLAlchemyRestaurantRepository(RestaurantRepository):
         models = result.all()
         return [
             Restaurant(
-                id=m.restaurant_id,
+                id=m.id_restaurant,
                 name=m.name,
                 location=m.location,
                 opening_time=m.opening_time,
-                closing_time=m.closing_time
+                closing_time=m.closing_time,
+                is_eliminated=m.is_eliminated
             )
             for m in models
         ]
 
     async def add_restaurant(self, restaurant: Restaurant) -> Restaurant:
-        db_restaurant = RestaurantModel(name=restaurant.time, location=restaurant.location, opening_time=restaurant.opening_time, closing_time=restaurant.closing_time)
+        db_restaurant = RestaurantModel(name=restaurant.name, location=restaurant.location, opening_time=restaurant.opening_time, closing_time=restaurant.closing_time, is_eliminated=False)
         self.db.add(db_restaurant)
         await self.db.commit()
         await self.db.refresh(db_restaurant)

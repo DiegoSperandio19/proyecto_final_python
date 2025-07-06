@@ -8,7 +8,7 @@ class Restaurant(BaseModel):
     location: str
     opening_time: time
     closing_time: time
-
+    is_eliminated: bool
     model_config = ConfigDict(
         from_attributes=True
     )

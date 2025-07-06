@@ -18,4 +18,5 @@ async def get_restaurants(restaurant_service: RestaurantService = Depends(get_re
 
 @restaurant_router.post("/restaurants/", response_model=Restaurant)
 async def add_restaurant(restaurant: RestaurantCreate, restaurant_service: RestaurantService = Depends(get_restaurant_service)):
-    return restaurant_service.add_restaurant(restaurant)
+    restaurant= await restaurant_service.add_restaurant(restaurant)
+    return restaurant
