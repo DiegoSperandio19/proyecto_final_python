@@ -14,6 +14,7 @@ class Dish(BaseModel):
     name: str
     description: str
     category: Category
+    restaurant_id: UUID
 
     model_config = ConfigDict(
         from_attributes=True
