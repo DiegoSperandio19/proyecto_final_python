@@ -5,13 +5,14 @@ from app.restaurants.domain.entities.restaurant_entity import Restaurant
 
 class RestaurantRepository(ABC):
     @abstractmethod
-    async def get_all_restaurants(self, user_id: UUID) -> None | User:
+    async def get_all_restaurants(self) -> None | Restaurant:
         pass
 
     @abstractmethod
     async def add_restaurant(self, user: Restaurant) -> Restaurant:
         pass
 
+'''
     @abstractmethod
     async def update_restaurant(self, restaurant_id: UUID) -> Restaurant:
         pass
@@ -19,3 +20,5 @@ class RestaurantRepository(ABC):
     @abstractmethod
     async def delete_restaurant(self, restaurant_id: UUID) -> Restaurant:
         pass
+
+'''
