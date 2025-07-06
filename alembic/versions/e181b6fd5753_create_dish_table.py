@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column('category', sa.String(), nullable=False),
         sa.Column('isAvailable', sa.Boolean(), nullable=False, default=True),
         sa.Column('restaurant_id', sa.Uuid(), nullable=False),
+        sa.Column('isEliminated', sa.Boolean(), nullable=False, default=False),
         sa.ForeignKeyConstraint(['restaurant_id'], ['restaurant.id_restaurant'],name="FK:dish_restaurant")
     )
 

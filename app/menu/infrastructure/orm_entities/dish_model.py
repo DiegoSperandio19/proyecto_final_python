@@ -11,4 +11,5 @@ class DishModel(SQLModel, table=True):
     description: str =Field(nullable=False)
     category: str = Field(nullable=False)
     isAvailable: bool = Field(default=True, nullable=False)
+    isEliminated: bool = Field(default=False, nullable=False)
     restaurant_id: UUID = Field(nullable=False, foreign_key="restaurant.id_restaurant")

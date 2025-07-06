@@ -14,6 +14,7 @@ class SQLDishRepository(DishRepository):
         self.db = session
 
     async def get_dish_by_id(self, dish_id: UUID) -> None | Dish:
+        statement = select(DishModel).where(DishModel.id == dish_id).where(DishModel.isEliminated==False)
         dish_db = await self.db.get(DishModel, dish_id)
         if dish_db is None:
             return None
