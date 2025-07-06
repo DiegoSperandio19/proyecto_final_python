@@ -11,6 +11,10 @@ from app.auth.infraestructure.repositories.orm_user_repository import SQLUserRep
 from app.db import get_session
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.restaurants.api.controllers.restaurant_router import restaurant_router
+#from app.restaurants.domain.services.auth_service import AuthService
+#from app.auth.domain.value_objects.user_dto import UserCreate, UserOut
+#from app.auth.infraestructure.repositories.orm_role_repository import SQLRoleRepository
 
 
 
@@ -35,7 +39,7 @@ def get_app():
     )
 
     app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-
+    app.include_router(restaurant_router, prefix="/restaurants", tags=["Restaurants"])
     return app
 
 app = get_app()
