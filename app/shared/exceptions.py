@@ -25,3 +25,8 @@ class DishNotFound(Exception):
 class HoursReservation(Exception):
     def __init__(self, message: str):
         super().__init__(message)
+
+class TableNotFound(Exception):
+    def __init__(self, id: UUID):
+        self.id = id
+        super().__init__(f"Table with ID '{self.id}' not found")
