@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.restaurants.api.controllers.restaurant_router import restaurant_router
 from app.menu.api.controllers.menu_router import menu_router
+from app.restaurants.api.controllers.table_router import table_router
 #from app.restaurants.domain.services.auth_service import AuthService
 #from app.auth.domain.value_objects.user_dto import UserCreate, UserOut
 #from app.auth.infraestructure.repositories.orm_role_repository import SQLRoleRepository
@@ -42,6 +43,7 @@ def get_app():
     app.include_router(auth_router, prefix="/auth", tags=["Auth"])
     app.include_router(restaurant_router, prefix="/restaurants", tags=["Restaurants"])
     app.include_router(menu_router, prefix="/menu", tags=["Menu"])
+    app.include_router(table_router, prefix="/tables", tags=["Tables"])
     return app
 
 app = get_app()

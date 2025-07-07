@@ -6,8 +6,6 @@ class RestaurantCreate(BaseModel):
     location: str
     opening_time: time
     closing_time: time
-    is_eliminated: bool
-    
     @model_validator(mode='after')
     def validate_times(self) -> 'RestaurantCreate':
         if self.opening_time >= self.closing_time:
