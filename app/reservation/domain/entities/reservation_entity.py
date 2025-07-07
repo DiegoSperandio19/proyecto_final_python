@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import date, time
 from enum import Enum
 from typing import List
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
@@ -19,6 +19,7 @@ class Reservation(BaseModel):
     id_table: UUID | None = None  
     start_time: time
     end_time: time
+    reservation_date: date
     status: ReservationStatus = ReservationStatus.PENDING
     user: User | None = None
     table: Table | None = None

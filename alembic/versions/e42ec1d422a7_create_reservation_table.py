@@ -26,6 +26,7 @@ def upgrade() -> None:
         sa.Column('id_table', sa.Uuid(), nullable=True),
         sa.Column('start_time', sa.Time(), nullable=False),
         sa.Column('end_time', sa.Time(), nullable=False),
+        sa.Column('reservation_date', sa.Date(), nullable=False),
         sa.Column('status', sa.String(), nullable=False, default='Pending'),
         sa.Column('is_eliminated', sa.Boolean(), nullable=False, default=False),
         sa.ForeignKeyConstraint(['id_user'], ['user.id'], name="FK:reservation_user"),

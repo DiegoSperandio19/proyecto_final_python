@@ -45,18 +45,19 @@ class ReservationService:
             raise HoursReservation("The reservation time must be within the restaurant's opening hours")
         
         #validate if the table is available
-        if not await self.reservation_repo.validate_table_available(reservation_data.id_table, reservation_data.start_time, reservation_data.end_time):
+        if not await self.reservation_repo.validate_table_available(reservation_data.id_table, reservation_data.start_time, reservation_data.end_time, reservation_data.reservation_date):
             raise HourConflict("The table is not available for the selected time")
         
         #validate if the user has an existing reservation
-        if not await self.reservation_repo.validate_user_available(user_id, reservation_data.start_time, reservation_data.end_time):
+        if not await self.reservation_repo.validate_user_available(user_id, reservation_data.start_time, reservation_data.end_time, reservation_data.reservation_date):
             raise HourConflict("The user already has a reservation for the selected time")
 
         reservation_entity = Reservation(
             id_user=user_id,
             id_table=reservation_data.id_table,
             start_time=reservation_data.start_time,
-            end_time=reservation_data.end_time
+            end_time=reservation_data.end_time,
+            reservation_date=reservation_data.reservation_date
         )
         return await self.reservation_repo.register_reservation(reservation_entity)
     
@@ -69,10 +70,12 @@ class ReservationService:
                 raise ReservationPermissionDenied("You don't have permission to cancel this reservation")
             #
             now = datetime.now()
-            start_datetime = datetime.combine(now.date(), existing_reservation.start_time)
-            time_difference: timedelta = start_datetime - now
-            one_hour = timedelta(hours=1)
-            if time_difference < one_hour:
-                raise HourConflict("You can only cancel a reservation at least one hour before the start time")
+            original_date = existing_reservation.reservation_date
+            if original_date == now.date():
+                start_datetime = datetime.combine(now.date(), existing_reservation.start_time)
+                time_difference: timedelta = start_datetime - now
+                one_hour = timedelta(hours=1)
+                if time_difference < one_hour:
+                    raise HourConflict("You can only cancel a reservation at least one hour before the start time")
         return await self.reservation_repo.change_status(reservation_id, "Cancelled")
         

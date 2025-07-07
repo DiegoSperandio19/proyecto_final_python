@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import date, time
 from pydantic import BaseModel
 from uuid import UUID
 
@@ -10,6 +10,7 @@ class ReservationCreate(BaseModel):
     id_table: UUID 
     start_time: time
     end_time: time
+    reservation_date: date
 
 class ReservationOut(BaseModel): 
     id: UUID
@@ -17,4 +18,5 @@ class ReservationOut(BaseModel):
     id_table: UUID 
     start_time: time
     end_time: time
+    reservation_date: date
     status: ReservationStatus

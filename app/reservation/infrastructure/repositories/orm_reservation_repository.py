@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 from sqlmodel import and_, or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.reservation.domain.entities.reservation_entity import Reservation
@@ -19,6 +19,7 @@ class SQLReservationRepository(ReservationRepository):
             id_table=reservation.id_table,
             start_time=reservation.start_time,
             end_time=reservation.end_time,
+            reservation_date=reservation.reservation_date,
             status=reservation.status
         )
         self.db.add(db_reservation)
@@ -26,24 +27,26 @@ class SQLReservationRepository(ReservationRepository):
         await self.db.refresh(db_reservation)
         return Reservation.model_validate(db_reservation)
     
-    async def validate_table_available(self, table_id: UUID, start_time: time, end_time: time) -> bool:
+    async def validate_table_available(self, table_id: UUID, start_time: time, end_time: time, reservation_date:date) -> bool:
         statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
                     ).where(ReservationModel.status=="Pending"
                     ).where(ReservationModel.id_table==table_id
                     ).where(ReservationModel.start_time <= end_time
-                    ).where(ReservationModel.end_time >= start_time)
+                    ).where(ReservationModel.end_time >= start_time
+                    ).where(ReservationModel.reservation_date==reservation_date)
         result = await self.db.exec(statement)
         reservation = result.first()
         if reservation:
             return False
         return True
     
-    async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time) -> bool:
+    async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time, reservation_date:date) -> bool:
         statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
                     ).where(ReservationModel.status=="Pending"
                     ).where(ReservationModel.id_user==user_id
                     ).where(ReservationModel.start_time <= end_time
-                    ).where(ReservationModel.end_time >= start_time)
+                    ).where(ReservationModel.end_time >= start_time
+                    ).where(ReservationModel.reservation_date==reservation_date)
         result = await self.db.exec(statement)
         reservation = result.first()
         if reservation:
@@ -62,6 +65,7 @@ class SQLReservationRepository(ReservationRepository):
             id_user=db_reservation.id_user,
             id_table=db_reservation.id_table,
             start_time=db_reservation.start_time,
+            reservation_date=db_reservation.reservation_date,
             end_time=db_reservation.end_time,
             status=db_reservation.status
         )
@@ -81,6 +85,7 @@ class SQLReservationRepository(ReservationRepository):
             id_table=db_reservation.id_table,
             start_time=db_reservation.start_time,
             end_time=db_reservation.end_time,
+            reservation_date=db_reservation.reservation_date,
             status=db_reservation.status
         )
         return reservation
