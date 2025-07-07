@@ -4,7 +4,9 @@ from typing import List
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from uuid import UUID
 
+from app.auth.domain.entities.user_entity import User
 from app.menu.domain.entities.dish_entity import Dish
+from app.restaurants.domain.entities.table_entity import Table
 
 class ReservationStatus(str, Enum):
     PENDING  = "Pending"
@@ -18,6 +20,8 @@ class Reservation(BaseModel):
     start_time: time
     end_time: time
     status: ReservationStatus = ReservationStatus.PENDING
+    user: User | None = None
+    table: Table | None = None
     #Preorder: List[Preorder] | None = None
 
 
