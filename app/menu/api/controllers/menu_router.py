@@ -10,7 +10,7 @@ from app.auth.infraestructure.utils.auth_utils import ACCESS_TOKEN_EXPIRE_MINUTE
 from app.db import get_session
 from app.menu.domain.entities.dish_entity import Dish
 from app.menu.domain.services.menu_service import MenuService
-from app.menu.domain.value_object.dish_dto import DishCreate, DishUpdate
+from app.menu.domain.value_object.dish_dto import DishCreate, DishOut, DishUpdate
 from app.menu.infrastructure.repositories.orm_dish_repository import SQLDishRepository
 from app.shared.exceptions import DishNotFound, InvalidName
 
@@ -20,7 +20,7 @@ async def get_menu_service(session: AsyncSession = Depends(get_session)):
     dish_repo = SQLDishRepository(session)
     return MenuService(dish_repo)
 
-@menu_router.post("/dish/create")
+@menu_router.post("/dish/create", response_model=DishOut)
 async def add_dish(
     dish_create: DishCreate,
     get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
@@ -48,7 +48,7 @@ async def get_dish(
         )
     return dishes
 
-@menu_router.put("/dish/update")
+@menu_router.put("/dish/update", response_model=DishOut)
 async def update_dish(
     dish_update: DishUpdate,
     get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
