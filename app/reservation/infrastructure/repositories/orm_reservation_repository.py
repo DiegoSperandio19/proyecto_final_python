@@ -4,6 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.repositories.reservation_repository import ReservationRepository
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
+from app.reservation.infrastructure.orm_entities.reservation_model import ReservationModel
 
 class SQLReservationRepository(ReservationRepository):
 
@@ -11,7 +12,7 @@ class SQLReservationRepository(ReservationRepository):
         self.db = session
     
     async def register_reservation(self, reservation: Reservation) -> None | Reservation:
-        db_reservation = Reservation(
+        db_reservation = ReservationModel(
             id_user=reservation.id_user,
             id_table=reservation.id_table,
             start_time=reservation.start_time,
@@ -20,5 +21,5 @@ class SQLReservationRepository(ReservationRepository):
         )
         self.db.add(db_reservation)
         await self.db.commit()
-        self.db.refresh(db_reservation)
+        await self.db.refresh(db_reservation)
         return Reservation.model_validate(db_reservation)

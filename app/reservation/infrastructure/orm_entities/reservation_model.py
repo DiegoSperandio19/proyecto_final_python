@@ -1,4 +1,4 @@
-from time import time
+from datetime import time
 from uuid import UUID, uuid4
 from sqlmodel import Field, SQLModel
 
