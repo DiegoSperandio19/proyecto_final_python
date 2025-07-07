@@ -27,3 +27,4 @@ async def add_dish(
     get_current_user: Annotated[User, Depends(require_client_role)]
 ):
     return await get_reservation_service.create_reservation(reservation, user_id=get_current_user.id)
+
