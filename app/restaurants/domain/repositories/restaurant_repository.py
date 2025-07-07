@@ -12,6 +12,10 @@ class RestaurantRepository(ABC):
     async def add_restaurant(self, user: Restaurant) -> Restaurant:
         pass
 
+    @abstractmethod
+    async def get_restaurant_by_id(self, restaurant_id: UUID) -> None | Restaurant:
+        pass
+
 '''
     @abstractmethod
     async def update_restaurant(self, restaurant_id: UUID) -> Restaurant:

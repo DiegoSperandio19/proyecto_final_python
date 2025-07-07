@@ -9,7 +9,7 @@ class MenuService:
     def __init__(self, dish_repo: DishRepository):
         self.dish_repo = dish_repo
 
-    async def create_dish(self, dish_data: DishCreate) -> Dish:
+    async def create_dish(self, dish_data: DishCreate) -> Dish | None:
         valid_name = await self.dish_repo.validate_dish_name(dish_name=dish_data.name, restaurant_id=dish_data.restaurant_id)
         if valid_name == False:
             raise InvalidName(dish_data.name, dish_data.restaurant_id)
@@ -26,7 +26,7 @@ class MenuService:
     async def get_menu_by_restaurant(self, restaurant_id: str) -> list[Dish] | None:
         return await self.dish_repo.get_dishes_by_restaurant(restaurant_id)
     
-    async def update_dish(self, dish_data: DishUpdate) -> Dish:
+    async def update_dish(self, dish_data: DishUpdate) -> Dish | None:
         existing_dish = await self.dish_repo.get_dish_by_id(dish_id=dish_data.id)
         if not existing_dish:
             raise DishNotFound(dish_data.id)

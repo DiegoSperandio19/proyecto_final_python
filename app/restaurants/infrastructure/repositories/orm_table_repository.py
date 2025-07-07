@@ -39,3 +39,16 @@ class SQLAlchemyTableRepository(TableRepository):
         await self.db.refresh(db_table)
         return Table.model_validate(db_table)
         
+    async def get_table_by_id(self, table_id: UUID) -> None | Table:
+        db_table = await self.db.get(TableModel, table_id)
+        if not db_table:
+            return None
+        table = Table(
+            id_table=db_table.id_table,
+            capacity=db_table.capacity,
+            location=db_table.location,
+            id_restaurant=db_table.id_restaurant,
+            is_eliminated=db_table.is_eliminated
+        )
+        return table
+        

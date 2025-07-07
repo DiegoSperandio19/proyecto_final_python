@@ -21,3 +21,30 @@ class DishNotFound(Exception):
     def __init__(self, id: UUID):
         self.id = id
         super().__init__(f"Dish with ID '{self.id}' not found")
+
+class HoursReservation(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+class TableNotFound(Exception):
+    def __init__(self, id: UUID):
+        self.id = id
+        super().__init__(f"Table with ID '{self.id}' not found")
+
+class HourConflict(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+class ReservationNotFound(Exception):
+    def __init__(self, id: UUID):
+        self.id = id
+        super().__init__(f"Reservation with ID '{self.id}' not found")
+
+class User(Exception):
+    def __init__(self, id: UUID):
+        self.id = id
+        super().__init__(f"Reservation with ID '{self.id}' not found")
+
+class ReservationPermissionDenied(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
