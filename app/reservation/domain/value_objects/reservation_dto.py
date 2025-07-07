@@ -4,8 +4,7 @@ from uuid import UUID
 
 
 
-class ReservationCreate(BaseModel):
-    id_user: UUID 
+class ReservationCreate(BaseModel): 
     id_table: UUID 
     start_time: time
     end_time: time
