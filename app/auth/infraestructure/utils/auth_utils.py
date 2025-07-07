@@ -72,7 +72,7 @@ async def require_admin_role(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(get_session)
 ) -> User:
-    return await get_current_user(required_scopes=["client:read"], token=token, session=session)
+    return await get_current_user(required_scopes=["client:read", "dish:create", "dish:read", "dish:update"], token=token, session=session)
     #OJO esa lsita de required_scopes se va actualziando (agregando cosas) según los nuevos requisitos
     #Que vayan saliendo y que el rol pueda usar
 
@@ -80,7 +80,7 @@ async def require_client_role(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(get_session)
 ) -> User:
-    return await get_current_user(required_scopes=["client:read", "client:update"], token=token, session=session)
+    return await get_current_user(required_scopes=["client:read", "client:update", "dish:read"], token=token, session=session)
     #OJO esa lsita de required_scopes se va actualziando (agregando cosas) según los nuevos requisitos#
 
 
