@@ -27,13 +27,14 @@ class SQLAlchemyTableRepository(TableRepository):
         return models
 
     async def get_tables_by_location(self,location: str) -> None | Table:
-        statement = select(TableModel).where(TableModel.location == capacitylocation)
+        statement = select(TableModel).where(TableModel.location == location)
         result= await self.db.exec(statement)
         models = result.all()
         return models
 
     async def add_table(self, table: Table) -> Table:
-        db_table = TableModel(capacity=table.capacity, location=table.location, id_restaurant=table.id_restaurant)
+        db_table = TableModel(capacity=table.capacity, location=table.location, id_restaurant=table.id_restaurant,is_eliminated=False)
+        self.db.add(db_table)
         await self.db.commit()
         await self.db.refresh(db_table)
         return Table.model_validate(db_table)

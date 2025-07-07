@@ -12,17 +12,17 @@ async def get_table_service(session: AsyncSession = Depends(get_session)):
     repository: SQLAlchemyTableRepository = SQLAlchemyTableRepository(session)
     return TableService(repository)
 
-@table_router.get("/tables/{id_restaurant}", response_model=list[Table])
+@table_router.get("/tables/id/{id_restaurant}", response_model=list[Table])
 async def get_tables_by_restaurant(id_restaurant: UUID, table_service: TableService = Depends(get_table_service)):
     tables= await table_service.get_tables_by_restaurant(id_restaurant)
     return tables
 
-@table_router.get("/tables/{category}", response_model=list[Table])
+@table_router.get("/tables/capacity/{capacity}", response_model=list[Table])
 async def get_tables_by_capacity(capacity: int, table_service: TableService = Depends(get_table_service)):
     tables= await table_service.get_tables_by_capacity(capacity)
     return tables
 
-@table_router.get("/tables/{location}", response_model=list[Table])
+@table_router.get("/tables/location/{location}", response_model=list[Table])
 async def get_tables_by_location(location: str, table_service: TableService = Depends(get_table_service)):
     tables= await table_service.get_tables_by_location(location)
     return tables

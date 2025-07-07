@@ -9,5 +9,6 @@ class TableModel(SQLModel, table=True):
     id_table: UUID = Field(default_factory=uuid4, primary_key=True)
     capacity: int =Field(nullable=False, unique=True)
     location: str =Field(nullable=False)
+    is_eliminated: bool =Field(nullable=False)
     id_restaurant: UUID = Field(foreign_key="restaurant.id_restaurant", nullable=False)
     restaurant: "RestaurantModel" = Relationship(back_populates="tables")
