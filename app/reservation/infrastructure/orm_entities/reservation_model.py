@@ -1,8 +1,6 @@
 from time import time
 from uuid import UUID, uuid4
-from sqlmodel import Field, Relationship, SQLModel
-
-from app.menu.domain.entities.dish_entity import Category
+from sqlmodel import Field, SQLModel
 
 class ReservationModel(SQLModel, table=True):
     __tablename__ = "reservation"
