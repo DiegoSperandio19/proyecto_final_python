@@ -38,11 +38,17 @@ class ReservationService:
         restaurant = await self.restaurant_repo.get_restaurant_by_id(existing_table.id_restaurant)
         restaurant_opening_time = datetime.combine(date, restaurant.opening_time)
         restaurant_closing_time = datetime.combine(date, restaurant.closing_time)
-
         validate_start_time = start_datetime >= restaurant_opening_time and start_datetime < restaurant_closing_time
         validate_end_time = end_datetime > restaurant_opening_time and end_datetime <= restaurant_closing_time
         if not (validate_start_time and validate_end_time):
             raise HoursReservation("The reservation time must be within the restaurant's opening hours")
+        
+        #validate if the table is available
+        if not await self.reservation_repo.validate_table_available(reservation_data.id_table, reservation_data.start_time, reservation_data.end_time):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The table is not available for the selected time"
+            )
 
         reservation_entity = Reservation(
             id_user=user_id,

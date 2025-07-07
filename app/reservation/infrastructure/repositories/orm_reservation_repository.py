@@ -1,5 +1,7 @@
 from typing import List
 from uuid import UUID
+from datetime import datetime, time, timedelta
+from sqlmodel import and_, or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.repositories.reservation_repository import ReservationRepository
@@ -23,3 +25,14 @@ class SQLReservationRepository(ReservationRepository):
         await self.db.commit()
         await self.db.refresh(db_reservation)
         return Reservation.model_validate(db_reservation)
+    
+    async def validate_table_available(self, table_id: UUID, start_time: time, end_time: time) -> bool:
+        statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
+                    ).where(ReservationModel.id_table==table_id
+                    ).where(ReservationModel.start_time <= end_time
+                    ).where(ReservationModel.end_time >= start_time)
+        result = await self.db.exec(statement)
+        reservation = result.first()
+        if reservation:
+            return False
+        return True
