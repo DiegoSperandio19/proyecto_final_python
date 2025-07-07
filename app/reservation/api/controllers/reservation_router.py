@@ -73,4 +73,4 @@ async def cancel_reservation(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
-    return await get_reservation_service.cancel_reservation(reservation_id, get_current_user)
+    return reservation

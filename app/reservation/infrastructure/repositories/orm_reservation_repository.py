@@ -28,6 +28,7 @@ class SQLReservationRepository(ReservationRepository):
     
     async def validate_table_available(self, table_id: UUID, start_time: time, end_time: time) -> bool:
         statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
+                    ).where(ReservationModel.status=="Pending"
                     ).where(ReservationModel.id_table==table_id
                     ).where(ReservationModel.start_time <= end_time
                     ).where(ReservationModel.end_time >= start_time)
@@ -39,6 +40,7 @@ class SQLReservationRepository(ReservationRepository):
     
     async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time) -> bool:
         statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
+                    ).where(ReservationModel.status=="Pending"
                     ).where(ReservationModel.id_user==user_id
                     ).where(ReservationModel.start_time <= end_time
                     ).where(ReservationModel.end_time >= start_time)
