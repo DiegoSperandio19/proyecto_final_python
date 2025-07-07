@@ -1,8 +1,7 @@
+from typing import List
 from uuid import UUID, uuid4
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 from datetime import time
-
-from app.restaurants.domain.entities.restaurant_entity import Restaurant
 
 class RestaurantModel(SQLModel, table=True):
     __tablename__ = "restaurant"
@@ -13,3 +12,4 @@ class RestaurantModel(SQLModel, table=True):
     opening_time: time =Field(nullable=False)
     closing_time: time =Field(nullable=False)
     is_eliminated: bool =Field(nullable=False)
+    tables: List["TableModel"] = Relationship(back_populates="restaurant")
