@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -47,3 +48,21 @@ class SQLDishRepository(DishRepository):
         if dish_db is None:
             return True
         return False
+    
+    async def get_dishes_by_restaurant(self, restaurant_id) -> List[Dish] | None:
+        statement = select(DishModel).where(DishModel.restaurant_id==restaurant_id).where(DishModel.isEliminated==False)
+        result = await self.db.exec(statement)
+        dishes_db = result.all()
+        if not dishes_db:
+            return None
+        list_dishes = []
+        for dish_db in dishes_db:
+            dish = Dish(
+                id=dish_db.id,
+                name=dish_db.name,
+                description=dish_db.description,
+                category=dish_db.category,
+                restaurant_id=dish_db.restaurant_id
+            )
+            list_dishes.append(dish)
+        return list_dishes

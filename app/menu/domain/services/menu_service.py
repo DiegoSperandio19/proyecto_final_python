@@ -22,3 +22,6 @@ class MenuService:
         )
 
         return await self.dish_repo.add_dish(dish_entity)
+    
+    async def get_menu_by_restaurant(self, restaurant_id: str) -> list[Dish] | None:
+        return await self.dish_repo.get_dishes_by_restaurant(restaurant_id)

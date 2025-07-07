@@ -34,6 +34,20 @@ async def add_dish(
         )
     return dish
 
+@menu_router.get("/menu/{restaurant_id}")
+async def get_dish(
+    restaurant_id:UUID,
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
+
+):
+    dishes = await get_menu_service.get_menu_by_restaurant(restaurant_id)
+    if not dishes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No dishes found for this restaurant"
+        )
+    return dishes
+
 @menu_router.get("/dish{dish_id}")
 async def get_dish(
     dish_id: UUID,
