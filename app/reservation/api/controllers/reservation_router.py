@@ -15,7 +15,7 @@ from app.reservation.domain.value_objects.reservation_dto import ReservationCrea
 from app.reservation.infrastructure.repositories.orm_reservation_repository import SQLReservationRepository
 from app.restaurants.infrastructure.repositories.orm_restaurant_repository import SQLAlchemyRestaurantRepository
 from app.restaurants.infrastructure.repositories.orm_table_repository import SQLAlchemyTableRepository
-from app.shared.exceptions import HoursReservation, TableNotFound
+from app.shared.exceptions import HourConflict, HoursReservation, TableNotFound
 
 reservation_router=APIRouter()
 
@@ -41,6 +41,11 @@ async def add_dish(
     except TableNotFound as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+    except HourConflict as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
         )
     return reservation

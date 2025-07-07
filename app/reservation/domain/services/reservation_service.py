@@ -7,7 +7,7 @@ from app.reservation.domain.repositories.reservation_repository import Reservati
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
 from app.restaurants.domain.repositories.restaurant_repository import RestaurantRepository
 from app.restaurants.domain.repositories.table_repository import TableRepository
-from app.shared.exceptions import HoursReservation, TableNotFound
+from app.shared.exceptions import HourConflict, HoursReservation, TableNotFound
 
 class ReservationService:
     def __init__(self, reservation_repo: ReservationRepository, table_repo: TableRepository, restaurant_repo: RestaurantRepository):
@@ -45,10 +45,11 @@ class ReservationService:
         
         #validate if the table is available
         if not await self.reservation_repo.validate_table_available(reservation_data.id_table, reservation_data.start_time, reservation_data.end_time):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The table is not available for the selected time"
-            )
+            raise HourConflict("The table is not available for the selected time")
+        
+        #validate if the user has an existing reservation
+        if not await self.reservation_repo.validate_user_available(user_id, reservation_data.start_time, reservation_data.end_time):
+            raise HourConflict("The user already has a reservation for the selected time")
 
         reservation_entity = Reservation(
             id_user=user_id,

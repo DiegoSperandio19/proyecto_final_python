@@ -36,3 +36,14 @@ class SQLReservationRepository(ReservationRepository):
         if reservation:
             return False
         return True
+    
+    async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time) -> bool:
+        statement = select(ReservationModel).where(ReservationModel.is_eliminated==False
+                    ).where(ReservationModel.id_user==user_id
+                    ).where(ReservationModel.start_time <= end_time
+                    ).where(ReservationModel.end_time >= start_time)
+        result = await self.db.exec(statement)
+        reservation = result.first()
+        if reservation:
+            return False
+        return True

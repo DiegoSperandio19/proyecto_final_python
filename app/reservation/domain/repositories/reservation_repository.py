@@ -13,3 +13,7 @@ class ReservationRepository(ABC):
     @abstractmethod
     async def validate_table_available(self, table_id: UUID, start_time: time, end_time: time) -> bool:
         pass
+
+    @abstractmethod
+    async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time) -> bool:
+        pass
