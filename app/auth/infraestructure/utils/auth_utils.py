@@ -72,7 +72,7 @@ async def require_admin_role(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(get_session)
 ) -> User:
-    return await get_current_user(required_scopes=["user:read", "restaurant:read", "restaurant:create", "restaurant:update", "restaurante:delete", "table:read", "table:create", "table:update", "table:delete", "reservation:create", "reservation:update", "reservation:delete", "reservation:read", "dish:read", "dish:create", "dish:update", "dish:delete", "preorder:create", "preorder:read", "preorder:delete"], token=token, session=session)
+    return await get_current_user(required_scopes=["user:create", "user:read", "user:update", "restaurant:read", "restaurant:create", "restaurant:update", "restaurante:delete", "table:read", "table:create", "table:update", "table:delete", "reservation:create", "reservation:update", "reservation:delete", "reservation:read", "dish:read", "dish:create", "dish:update", "dish:delete", "preorder:create", "preorder:read", "preorder:delete"], token=token, session=session)
     #OJO esa lsita de required_scopes se va actualziando (agregando cosas) según los nuevos requisitos
     #Que vayan saliendo y que el rol pueda usar
 
