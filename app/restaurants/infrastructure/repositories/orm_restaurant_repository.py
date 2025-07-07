@@ -1,4 +1,5 @@
 #from uuid import UUID
+from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
@@ -25,4 +26,17 @@ class SQLAlchemyRestaurantRepository(RestaurantRepository):
         await self.db.commit()
         await self.db.refresh(db_restaurant)
         return Restaurant.model_validate(db_restaurant)
-        
+    
+    async def get_restaurant_by_id(self, restaurant_id: UUID) -> None | Restaurant:
+        restaurant_db = await self.db.get(RestaurantModel, restaurant_id)
+        if not restaurant_db:
+            return None
+        restaurant = Restaurant(
+            id_restaurant=restaurant_db.id_restaurant,
+            name=restaurant_db.name,
+            location=restaurant_db.location,
+            opening_time= restaurant_db.opening_time,
+            closing_time= restaurant_db.closing_time,
+            is_eliminated= restaurant_db.is_eliminated
+        )
+        return restaurant

@@ -13,6 +13,7 @@ from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.services.reservation_service import ReservationService
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
 from app.reservation.infrastructure.repositories.orm_reservation_repository import SQLReservationRepository
+from app.restaurants.infrastructure.repositories.orm_restaurant_repository import SQLAlchemyRestaurantRepository
 from app.restaurants.infrastructure.repositories.orm_table_repository import SQLAlchemyTableRepository
 from app.shared.exceptions import HoursReservation, TableNotFound
 
@@ -21,7 +22,8 @@ reservation_router=APIRouter()
 async def get_reservation_service(session: AsyncSession = Depends(get_session)):
     reservation_repo =  SQLReservationRepository(session)
     table_repo = SQLAlchemyTableRepository(session)
-    return ReservationService(reservation_repo, table_repo)
+    restaurant_repo = SQLAlchemyRestaurantRepository(session)
+    return ReservationService(reservation_repo, table_repo, restaurant_repo)
 
 @reservation_router.post("/register")
 async def add_dish(
