@@ -15,7 +15,7 @@ from app.reservation.domain.value_objects.reservation_dto import ReservationCrea
 from app.reservation.infrastructure.repositories.orm_reservation_repository import SQLReservationRepository
 from app.restaurants.infrastructure.repositories.orm_restaurant_repository import SQLAlchemyRestaurantRepository
 from app.restaurants.infrastructure.repositories.orm_table_repository import SQLAlchemyTableRepository
-from app.shared.exceptions import HourConflict, HoursReservation, TableNotFound
+from app.shared.exceptions import HourConflict, HoursReservation, ReservationNotFound, ReservationPermissionDenied, TableNotFound
 
 reservation_router=APIRouter()
 
@@ -26,7 +26,7 @@ async def get_reservation_service(session: AsyncSession = Depends(get_session)):
     return ReservationService(reservation_repo, table_repo, restaurant_repo)
 
 @reservation_router.post("/register")
-async def add_dish(
+async def create_reservation(
     reservation: ReservationCreate,
     get_reservation_service: Annotated[ReservationService, Depends(get_reservation_service)],
     get_current_user: Annotated[User, Depends(require_client_role)]
@@ -50,3 +50,27 @@ async def add_dish(
         )
     return reservation
 
+@reservation_router.put("/cancel/{reservation_id}")
+async def cancel_reservation(
+    reservation_id: UUID,
+    get_reservation_service: Annotated[ReservationService, Depends(get_reservation_service)],
+    get_current_user: Annotated[User, Depends(require_client_role)]
+):
+    try:
+        reservation = await get_reservation_service.cancel_reservation(reservation_id, get_current_user)
+    except ReservationNotFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+    except ReservationPermissionDenied as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e)
+        )
+    except HourConflict as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    return await get_reservation_service.cancel_reservation(reservation_id, get_current_user)

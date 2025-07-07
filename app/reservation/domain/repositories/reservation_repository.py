@@ -17,3 +17,11 @@ class ReservationRepository(ABC):
     @abstractmethod
     async def validate_user_available(self, user_id: UUID, start_time: time, end_time: time) -> bool:
         pass
+
+    @abstractmethod
+    async def get_reservation_by_id(self, reservation_id:UUID) -> Reservation | None:
+        pass
+
+    @abstractmethod
+    async def change_status(self, reservation_id: UUID, status:str) -> None | Reservation:
+        pass

@@ -47,3 +47,38 @@ class SQLReservationRepository(ReservationRepository):
         if reservation:
             return False
         return True
+    
+    async def get_reservation_by_id(self, reservation_id:UUID) -> Reservation | None:
+        statement = select(ReservationModel).where(ReservationModel.id==reservation_id
+                        ).where(ReservationModel.is_eliminated==False).where(ReservationModel.status == "Pending")
+        result = await self.db.exec(statement)
+        db_reservation = result.first()
+        if db_reservation is None:
+            return None
+        reservation= Reservation(
+            id=db_reservation.id,
+            id_user=db_reservation.id_user,
+            id_table=db_reservation.id_table,
+            start_time=db_reservation.start_time,
+            end_time=db_reservation.end_time,
+            status=db_reservation.status
+        )
+        return reservation
+    
+    async def change_status(self, reservation_id: UUID, status:str) -> None | Reservation:
+        statement = select(ReservationModel).where(ReservationModel.id==reservation_id).where(ReservationModel.is_eliminated==False)
+        result = await self.db.exec(statement)
+        db_reservation = result.first()
+        db_reservation.status = status
+        self.db.add(db_reservation)
+        await self.db.commit()
+        await self.db.refresh(db_reservation)
+        reservation= Reservation(
+            id=db_reservation.id,
+            id_user=db_reservation.id_user,
+            id_table=db_reservation.id_table,
+            start_time=db_reservation.start_time,
+            end_time=db_reservation.end_time,
+            status=db_reservation.status
+        )
+        return reservation

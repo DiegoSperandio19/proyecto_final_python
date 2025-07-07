@@ -2,12 +2,13 @@ from datetime import datetime, time, timedelta
 from uuid import UUID
 from fastapi import HTTPException, status
 
+from app.auth.domain.entities.user_entity import User
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.repositories.reservation_repository import ReservationRepository
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
 from app.restaurants.domain.repositories.restaurant_repository import RestaurantRepository
 from app.restaurants.domain.repositories.table_repository import TableRepository
-from app.shared.exceptions import HourConflict, HoursReservation, TableNotFound
+from app.shared.exceptions import HourConflict, HoursReservation, ReservationNotFound, ReservationPermissionDenied, TableNotFound
 
 class ReservationService:
     def __init__(self, reservation_repo: ReservationRepository, table_repo: TableRepository, restaurant_repo: RestaurantRepository):
@@ -58,3 +59,20 @@ class ReservationService:
             end_time=reservation_data.end_time
         )
         return await self.reservation_repo.register_reservation(reservation_entity)
+    
+    async def cancel_reservation(self, reservation_id: UUID, user: User) -> Reservation | None:
+        existing_reservation = await self.reservation_repo.get_reservation_by_id(reservation_id)
+        if not existing_reservation:
+            raise ReservationNotFound(reservation_id)
+        if user.role.name == "client":
+            if existing_reservation.id_user!= user.id:
+                raise ReservationPermissionDenied("You don't have permission to cancel this reservation")
+            #
+            now = datetime.now()
+            start_datetime = datetime.combine(now.date(), existing_reservation.start_time)
+            time_difference: timedelta = start_datetime - now
+            one_hour = timedelta(hours=1)
+            if time_difference < one_hour:
+                raise HourConflict("You can only cancel a reservation at least one hour before the start time")
+        return await self.reservation_repo.change_status(reservation_id, "Cancelled")
+        
