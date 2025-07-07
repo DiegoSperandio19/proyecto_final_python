@@ -22,10 +22,19 @@ class ReservationService:
         if not existing_table:
             raise TableNotFound(id=reservation_data.id_table)
         
+        today = datetime.now().date()
+        if reservation_data.reservation_date < today:
+            raise HoursReservation("The reservation date cann't be in the past")
+        
         #validate start time and end time
-        date = datetime.now().date()
-        start_datetime = datetime.combine(date, reservation_data.start_time)
-        end_datetime = datetime.combine(date, reservation_data.end_time)
+        start_datetime = datetime.combine(reservation_data.reservation_date, reservation_data.start_time)
+        end_datetime = datetime.combine(reservation_data.reservation_date, reservation_data.end_time)
+
+        
+        now = datetime.now()
+        if start_datetime < now:
+            raise HoursReservation("The start time must be in the future")
+
         if start_datetime >= end_datetime:
             raise HoursReservation("The start time must be before the end time")
 
@@ -37,8 +46,8 @@ class ReservationService:
         
         #validate start time and end time with restaurant hours
         restaurant = await self.restaurant_repo.get_restaurant_by_id(existing_table.id_restaurant)
-        restaurant_opening_time = datetime.combine(date, restaurant.opening_time)
-        restaurant_closing_time = datetime.combine(date, restaurant.closing_time)
+        restaurant_opening_time = datetime.combine(reservation_data.reservation_date, restaurant.opening_time)
+        restaurant_closing_time = datetime.combine(reservation_data.reservation_date, restaurant.closing_time)
         validate_start_time = start_datetime >= restaurant_opening_time and start_datetime < restaurant_closing_time
         validate_end_time = end_datetime > restaurant_opening_time and end_datetime <= restaurant_closing_time
         if not (validate_start_time and validate_end_time):
