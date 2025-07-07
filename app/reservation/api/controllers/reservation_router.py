@@ -13,6 +13,7 @@ from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.services.reservation_service import ReservationService
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
 from app.reservation.infrastructure.repositories.orm_reservation_repository import SQLReservationRepository
+from app.shared.exceptions import HoursReservation
 
 reservation_router=APIRouter()
 
@@ -26,5 +27,12 @@ async def add_dish(
     get_reservation_service: Annotated[ReservationService, Depends(get_reservation_service)],
     get_current_user: Annotated[User, Depends(require_client_role)]
 ):
-    return await get_reservation_service.create_reservation(reservation, user_id=get_current_user.id)
+    try:
+        reservation = await get_reservation_service.create_reservation(reservation, user_id=get_current_user.id)
+    except HoursReservation as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    return reservation
 
