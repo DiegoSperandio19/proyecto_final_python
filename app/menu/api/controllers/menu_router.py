@@ -10,9 +10,9 @@ from app.auth.infraestructure.utils.auth_utils import ACCESS_TOKEN_EXPIRE_MINUTE
 from app.db import get_session
 from app.menu.domain.entities.dish_entity import Dish
 from app.menu.domain.services.menu_service import MenuService
-from app.menu.domain.value_object.dish_dto import DishCreate
+from app.menu.domain.value_object.dish_dto import DishCreate, DishUpdate
 from app.menu.infrastructure.repositories.orm_dish_repository import SQLDishRepository
-from app.shared.exceptions import InvalidName
+from app.shared.exceptions import DishNotFound, InvalidName
 
 menu_router=APIRouter()
 
@@ -20,7 +20,7 @@ async def get_menu_service(session: AsyncSession = Depends(get_session)):
     dish_repo = SQLDishRepository(session)
     return MenuService(dish_repo)
 
-@menu_router.post("/dish")
+@menu_router.post("/dish/create")
 async def add_dish(
     dish_create: DishCreate,
     get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
@@ -48,6 +48,25 @@ async def get_dish(
         )
     return dishes
 
+@menu_router.put("/dish/update")
+async def update_dish(
+    dish_update: DishUpdate,
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
+):
+    try:
+        dish = await get_menu_service.update_dish(dish_update)
+    except DishNotFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+    except InvalidName as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
+        )
+    return dish
+
 @menu_router.get("/dish{dish_id}")
 async def get_dish(
     dish_id: UUID,
@@ -55,3 +74,4 @@ async def get_dish(
 ):
     dish_repo = SQLDishRepository(session)
     return await dish_repo.get_dish_by_id(dish_id)
+

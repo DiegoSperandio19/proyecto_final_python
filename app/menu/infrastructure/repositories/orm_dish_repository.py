@@ -66,3 +66,20 @@ class SQLDishRepository(DishRepository):
             )
             list_dishes.append(dish)
         return list_dishes
+    
+    async def update_dish(self, dish: Dish) -> Dish:
+        db_dish = await self.db.get(DishModel, dish.id)
+        db_dish.name= dish.name
+        db_dish.description=dish.description
+        db_dish.category=dish.category
+        self.db.add(db_dish)
+        await self.db.commit()
+        await self.db.refresh(db_dish)
+        dish_result = Dish(
+            id=db_dish.id,
+            name=db_dish.name,
+            description=db_dish.description,
+            category=db_dish.category,
+            restaurant_id=db_dish.restaurant_id
+        )
+        return dish_result

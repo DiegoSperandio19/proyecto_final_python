@@ -15,3 +15,9 @@ class DishOut(BaseModel):
     description: str
     category: Category
     restaurant_id: UUID
+
+class DishUpdate(BaseModel):
+    id: UUID
+    new_name: str | None = None
+    new_description: str | None = None
+    new_category: Category | None = None

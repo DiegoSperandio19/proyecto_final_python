@@ -20,6 +20,10 @@ class DishRepository(ABC):
     @abstractmethod
     async def get_dishes_by_restaurant(self, restaurant_id) -> List[Dish] | None:
         pass
+
+    @abstractmethod
+    async def update_dish(self, dish: Dish) -> Dish:
+        pass
     #@abstractmethod
     #async def update_user(self, dish: UserUpdate) -> User:
     #    pass
