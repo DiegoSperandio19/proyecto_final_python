@@ -39,3 +39,11 @@ class SQLDishRepository(DishRepository):
         await self.db.commit()
         await self.db.refresh(db_dish)
         return Dish.model_validate(db_dish)
+    
+    async def validate_dish_name(self, dish_name: str, restaurant_id: UUID) -> bool:
+        statement = select(DishModel).where(DishModel.name==dish_name).where(DishModel.restaurant_id==restaurant_id)
+        result = await self.db.exec(statement)
+        dish_db = result.first()
+        if dish_db is None:
+            return True
+        return False

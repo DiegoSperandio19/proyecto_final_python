@@ -12,6 +12,7 @@ from app.menu.domain.entities.dish_entity import Dish
 from app.menu.domain.services.menu_service import MenuService
 from app.menu.domain.value_object.dish_dto import DishCreate
 from app.menu.infrastructure.repositories.orm_dish_repository import SQLDishRepository
+from app.shared.exceptions import InvalidName
 
 menu_router=APIRouter()
 
@@ -24,7 +25,14 @@ async def add_dish(
     dish_create: DishCreate,
     get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
 ):
-    return await get_menu_service.create_dish(dish_create)
+    try:
+        dish = await get_menu_service.create_dish(dish_create)
+    except InvalidName as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
+        )
+    return dish
 
 @menu_router.get("/dish{dish_id}")
 async def get_dish(
