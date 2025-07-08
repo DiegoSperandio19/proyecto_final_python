@@ -51,4 +51,28 @@ class SQLAlchemyTableRepository(TableRepository):
             is_eliminated=db_table.is_eliminated
         )
         return table
+
+    async def update_table(self,table_id: UUID, table: Table) -> Table:
+        db_table = await self.db.get(TableModel, table_id)
+        if not db_table:
+            raise HTTPException(status_code=404, detail='Table not found')
+        update_data=table.model_dump(exclude_none=True)
+        for field, value in update_data.items():
+            setattr(db_table, field, value)
+        self.db.add(db_table)
+        await self.db.commit()
+        await self.db.refresh(db_table)
+        return Table.model_validate(db_table)
+
+    async def soft_delete_table(self, table_id: UUID) -> Table:
+        db_table = await self.db.get(TableModel, table_id)
+        if not db_table:
+            raise HTTPException(status_code=404, detail="Table not found")
+        if db_table.is_eliminated:
+            raise HTTPException(status_code=400, detail="Table already deleted")
+        db_table.is_eliminated = True
+        self.db.add(db_table)
+        await self.db.commit()
+        await self.db.refresh(db_table)
+        return Table.model_validate(db_table)
         
