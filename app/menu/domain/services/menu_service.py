@@ -83,6 +83,7 @@ class MenuService:
             preorder_created = await self.preorder_repo.create_preorder(preorder)
             preorder_append = PreorderOut(
                 id_preorder=preorder_created.id,
+                id_dish=preorder_created.id_dish,
                 n_dishes=preorder_created.n_dishes
             )
             list_preorders.append(preorder_append)
