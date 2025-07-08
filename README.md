@@ -8,13 +8,17 @@
 
 3) Pgadmin se encuentra en la dirección: http://localhost:5050
 
-4) Para ejecutarse con usuarios de admin y cliente de prueba, ejecutar en pgadmin el archivo inserts.sql del proyecto
+4) Se coloca en el login de pgadmin el usuario admin@admin.com y la contraseña admin
+
+5) Se registra un servidor y se debe colocar db en la dirección, postgres en el usuario y postgres en la contraseña. El nombre del servidor no importa cual sea
+
+6) Para ejecutarse con usuarios de admin y cliente de prueba, ejecutar en pgadmin el archivo inserts.sql del proyecto
    
-5) Para iniciar sesión en la página se utiliza el correo del usuario:
+7) Para iniciar sesión en la página se utiliza el correo del usuario:
    	Para admin: username:admin@gmail.com password:admin
    	Para cliente: username:client@gmail.com password:client
    
-6) El admin puede acceder a todas las funcionalidades del programa, pero el cliente no
+8) El admin puede acceder a todas las funcionalidades del programa, pero el cliente no
 
 
 ## Explicación de la arquitectura:
