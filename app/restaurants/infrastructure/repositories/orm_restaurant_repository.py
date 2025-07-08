@@ -40,3 +40,27 @@ class SQLAlchemyRestaurantRepository(RestaurantRepository):
             is_eliminated= restaurant_db.is_eliminated
         )
         return restaurant
+
+    async def update_restaurant(self,restaurant_id: UUID, restaurant: Restaurant) -> Restaurant:
+        db_restaurant = await self.db.get(RestaurantModel, restaurant_id)
+        if not db_restaurant:
+            raise HTTPException(status_code=404, detail='Restaurant not found')
+        update_data=restaurant.model_dump(exclude_none=True)
+        for field, value in update_data.items():
+            setattr(db_restaurant, field, value)
+        self.db.add(db_restaurant)
+        await self.db.commit()
+        await self.db.refresh(db_restaurant)
+        return Restaurant.model_validate(db_restaurant)
+
+    async def soft_delete_restaurant(self, restaurant_id: UUID) -> Restaurant:
+        db_rest = await self.db.get(RestaurantModel, restaurant_id)
+        if not db_rest:
+            raise HTTPException(status_code=404, detail="Restaurant not found")
+        if db_rest.is_eliminated:
+            raise HTTPException(status_code=400, detail="Restaurant already deleted")
+        db_rest.is_eliminated = True
+        self.db.add(db_rest)
+        await self.db.commit()
+        await self.db.refresh(db_rest)
+        return Restaurant.model_validate(db_rest)
