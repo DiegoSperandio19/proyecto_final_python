@@ -8,6 +8,7 @@ class Preorder(BaseModel):
     id_reservation: UUID | None = None
     id_user: UUID | None = None
     id_table: UUID | None = None
+    id_dish: UUID | None = None
     n_dishes: int
 
     model_config = ConfigDict(

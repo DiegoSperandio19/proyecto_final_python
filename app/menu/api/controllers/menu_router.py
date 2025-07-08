@@ -11,14 +11,19 @@ from app.db import get_session
 from app.menu.domain.entities.dish_entity import Dish
 from app.menu.domain.services.menu_service import MenuService
 from app.menu.domain.value_object.dish_dto import DishCreate, DishOut, DishUpdate
+from app.menu.domain.value_object.preorder_dto import PreorderCreate
 from app.menu.infrastructure.repositories.orm_dish_repository import SQLDishRepository
-from app.shared.exceptions import DishNotFound, InvalidName
+from app.menu.infrastructure.repositories.orm_preorder_repository import SQLPreorderRepository
+from app.reservation.infrastructure.repositories.orm_reservation_repository import SQLReservationRepository
+from app.shared.exceptions import DishNotFound, InvalidName, User
 
 menu_router=APIRouter()
 
 async def get_menu_service(session: AsyncSession = Depends(get_session)):
     dish_repo = SQLDishRepository(session)
-    return MenuService(dish_repo)
+    preorder_repo = SQLPreorderRepository(session)
+    reservation_repo= SQLReservationRepository(session)
+    return MenuService(dish_repo, preorder_repo,reservation_repo)
 
 @menu_router.post("/dish/create", response_model=DishOut)
 async def add_dish(
@@ -67,6 +72,14 @@ async def update_dish(
         )
     return dish
 
+@menu_router.post("/preorder/create")
+async def create_preorder(
+    preorder_create: PreorderCreate,
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)],
+    get_current_user: Annotated[User, Depends(require_client_role)]
+):
+    return await get_menu_service.create_preorder(preorder_create, get_current_user)
+
 @menu_router.get("/dish{dish_id}")
 async def get_dish(
     dish_id: UUID,
@@ -74,4 +87,5 @@ async def get_dish(
 ):
     dish_repo = SQLDishRepository(session)
     return await dish_repo.get_dish_by_id(dish_id)
+
 
