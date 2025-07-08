@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.restaurants.domain.services.table_service import TableService
 from app.restaurants.domain.value_objects.created_table import TableCreate
+from app.restaurants.domain.value_objects.updated_table import TableUpdate
 from app.restaurants.domain.entities.table_entity import Table
 from app.restaurants.infrastructure.repositories.orm_table_repository import SQLAlchemyTableRepository
 from app.db import get_session
@@ -30,4 +31,14 @@ async def get_tables_by_location(location: str, table_service: TableService = De
 @table_router.post("/tables/", response_model=Table)
 async def add_table(table: TableCreate, table_service: TableService = Depends(get_table_service)):
     table= await table_service.add_table(table)
+    return table
+
+@table_router.put("/tables/{table_id}",response_model=Table)
+async def update_table(table_id: UUID, table: TableUpdate, table_service: TableService = Depends(get_table_service)):
+    table=await table_service.update_table(table_id, table)
+    return table
+
+@table_router.delete("/tables/{table_id}",response_model=Table)
+async def delete_table(table_id: UUID,table_service: TableService = Depends(get_table_service)):
+    table= await table_service.soft_delete_table(table_id)
     return table

@@ -23,3 +23,11 @@ class TableRepository(ABC):
     @abstractmethod
     async def get_table_by_id(self, table_id: UUID) -> None | Table:
         pass
+
+    @abstractmethod
+    async def update_table(self, table_id: UUID) -> Table:
+        pass
+  
+    @abstractmethod
+    async def soft_delete_table(self, table_id: UUID) -> Table:
+        pass
