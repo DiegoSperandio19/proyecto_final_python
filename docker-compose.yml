@@ -42,6 +42,7 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/proyecto_fastapi
       #- DATABASE_URL_TEST=postgresql+asyncpg://postgres:postgres@db:5432/proyecto_fastapi_test
+      - TZ=America/Caracas
     depends_on:
       db:
         condition: service_healthy
