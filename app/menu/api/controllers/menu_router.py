@@ -28,7 +28,8 @@ async def get_menu_service(session: AsyncSession = Depends(get_session)):
 @menu_router.post("/dish/create", response_model=DishOut)
 async def add_dish(
     dish_create: DishCreate,
-    get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)],
+    get_current_user: Annotated[User, Depends(require_admin_role)]
 ):
     try:
         dish = await get_menu_service.create_dish(dish_create)
@@ -42,7 +43,8 @@ async def add_dish(
 @menu_router.get("/menu/{restaurant_id}")
 async def get_dish(
     restaurant_id:UUID,
-    get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)],
+    get_current_user: Annotated[User, Depends(require_client_role)]
 
 ):
     dishes = await get_menu_service.get_menu_by_restaurant(restaurant_id)
@@ -56,7 +58,8 @@ async def get_dish(
 @menu_router.put("/dish/update", response_model=DishOut)
 async def update_dish(
     dish_update: DishUpdate,
-    get_menu_service: Annotated[MenuService, Depends(get_menu_service)]
+    get_menu_service: Annotated[MenuService, Depends(get_menu_service)],
+    get_current_user: Annotated[User, Depends(require_admin_role)]
 ):
     try:
         dish = await get_menu_service.update_dish(dish_update)
@@ -80,12 +83,12 @@ async def create_preorder(
 ):
     return await get_menu_service.create_preorder(preorder_create, get_current_user)
 
-@menu_router.get("/dish{dish_id}")
-async def get_dish(
-    dish_id: UUID,
-    session: AsyncSession = Depends(get_session)
-):
-    dish_repo = SQLDishRepository(session)
-    return await dish_repo.get_dish_by_id(dish_id)
+#@menu_router.get("/dish{dish_id}")
+#async def get_dish(
+#    dish_id: UUID,
+#    session: AsyncSession = Depends(get_session),
+#):
+ #   dish_repo = SQLDishRepository(session)
+ #   return await dish_repo.get_dish_by_id(dish_id)
 
 
