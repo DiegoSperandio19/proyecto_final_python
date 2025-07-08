@@ -6,6 +6,7 @@ from sqlmodel import select
 from app.restaurants.domain.entities.restaurant_entity import Restaurant
 from app.restaurants.domain.repositories.restaurant_repository import RestaurantRepository
 from app.restaurants.infrastructure.orm_entities.restaurant_model import RestaurantModel
+from fastapi import HTTPException
 
 
 

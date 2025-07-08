@@ -2,6 +2,7 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
+from fastapi import HTTPException
 from app.restaurants.domain.entities.table_entity import Table
 from app.restaurants.domain.repositories.table_repository import TableRepository
 from app.restaurants.infrastructure.orm_entities.table_model import TableModel
