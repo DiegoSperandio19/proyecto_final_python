@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.restaurants.domain.services.restaurant_service import RestaurantService
 from app.restaurants.domain.value_objects.created_restaurant import RestaurantCreate
+from app.restaurants.domain.value_objects.updated_restaurant import RestaurantUpdate
 from app.restaurants.domain.entities.restaurant_entity import Restaurant
 from app.restaurants.infrastructure.repositories.orm_restaurant_repository import SQLAlchemyRestaurantRepository
+from uuid import UUID
 from app.db import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
 restaurant_router = APIRouter()
@@ -19,4 +21,14 @@ async def get_restaurants(restaurant_service: RestaurantService = Depends(get_re
 @restaurant_router.post("/restaurants/", response_model=Restaurant)
 async def add_restaurant(restaurant: RestaurantCreate, restaurant_service: RestaurantService = Depends(get_restaurant_service)):
     restaurant= await restaurant_service.add_restaurant(restaurant)
+    return restaurant
+
+@restaurant_router.put("/restaurants/{restaurant_id}",response_model=Restaurant)
+async def update_restaurant(restaurant_id: UUID, restaurant: RestaurantUpdate, restaurant_service: RestaurantService = Depends(get_restaurant_service)):
+    restaurant=await restaurant_service.update_restaurant(restaurant_id, restaurant)
+    return restaurant
+
+@restaurant_router.delete("/restaurants/{restaurant_id}",response_model=Restaurant)
+async def delete_restaurant(restaurant_id: UUID,restaurant_service: RestaurantService = Depends(get_restaurant_service)):
+    restaurant= await restaurant_service.soft_delete_restaurant(restaurant_id)
     return restaurant

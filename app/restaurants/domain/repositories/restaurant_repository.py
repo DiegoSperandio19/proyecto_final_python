@@ -16,13 +16,12 @@ class RestaurantRepository(ABC):
     async def get_restaurant_by_id(self, restaurant_id: UUID) -> None | Restaurant:
         pass
 
-'''
+
     @abstractmethod
     async def update_restaurant(self, restaurant_id: UUID) -> Restaurant:
         pass
-    
+  
     @abstractmethod
-    async def delete_restaurant(self, restaurant_id: UUID) -> Restaurant:
+    async def soft_delete_restaurant(self, restaurant_id: UUID) -> Restaurant:
         pass
 
-'''
