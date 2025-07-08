@@ -93,7 +93,7 @@ class SQLReservationRepository(ReservationRepository):
         )
         return reservation
     
-    async def get_all_reservations(self):
+    async def get_all_reservations(self) -> List[ReservationIndividualOut]:
         statement = select(ReservationModel, UserModel, TableModel, RestaurantModel).join(UserModel, ReservationModel.id_user==UserModel.id
                         ).join(TableModel, ReservationModel.id_table==TableModel.id_table
                         ).join(RestaurantModel, TableModel.id_restaurant==RestaurantModel.id_restaurant

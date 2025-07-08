@@ -9,6 +9,7 @@ from app.auth.api.dto.token_dto import Token
 from app.auth.domain.entities.user_entity import User
 from app.auth.infraestructure.utils.auth_utils import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user, require_admin_role, require_client_role
 from app.db import get_session
+from app.menu.infrastructure.repositories.orm_preorder_repository import SQLPreorderRepository
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.services.reservation_service import ReservationService
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate, ReservationOut
@@ -23,7 +24,8 @@ async def get_reservation_service(session: AsyncSession = Depends(get_session)):
     reservation_repo =  SQLReservationRepository(session)
     table_repo = SQLAlchemyTableRepository(session)
     restaurant_repo = SQLAlchemyRestaurantRepository(session)
-    return ReservationService(reservation_repo, table_repo, restaurant_repo)
+    dish_repo = SQLPreorderRepository(session)
+    return ReservationService(reservation_repo, table_repo, restaurant_repo, dish_repo)
 
 @reservation_router.post("/register", response_model=ReservationOut, status_code=status.HTTP_201_CREATED)
 async def create_reservation(

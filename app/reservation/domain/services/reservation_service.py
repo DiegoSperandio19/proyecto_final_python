@@ -1,20 +1,23 @@
 from datetime import datetime, time, timedelta
+from typing import List
 from uuid import UUID
 from fastapi import HTTPException, status
 
 from app.auth.domain.entities.user_entity import User
+from app.menu.domain.repositories.preorder_repository import PreorderRepository
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.repositories.reservation_repository import ReservationRepository
-from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
+from app.reservation.domain.value_objects.reservation_dto import ReservationCreate, ReservationIndividualOut
 from app.restaurants.domain.repositories.restaurant_repository import RestaurantRepository
 from app.restaurants.domain.repositories.table_repository import TableRepository
 from app.shared.exceptions import HourConflict, HoursReservation, ReservationNotFound, ReservationPermissionDenied, TableNotFound
 
 class ReservationService:
-    def __init__(self, reservation_repo: ReservationRepository, table_repo: TableRepository, restaurant_repo: RestaurantRepository):
+    def __init__(self, reservation_repo: ReservationRepository, table_repo: TableRepository, restaurant_repo: RestaurantRepository, preorder_repo = PreorderRepository):
         self.reservation_repo = reservation_repo
         self.table_repo = table_repo
         self.restaurant_repo=restaurant_repo
+        self.preorder_repo= preorder_repo
 
     async def create_reservation(self, reservation_data: ReservationCreate, user_id: UUID) -> Reservation | None:
         #validate existing table
@@ -89,4 +92,9 @@ class ReservationService:
         return await self.reservation_repo.change_status(reservation_id, "Cancelled")
         
     async def get_all_reservations(self):
-        return await self.reservation_repo.get_all_reservations()
+        reservations: List[ReservationIndividualOut] = await self.reservation_repo.get_all_reservations()
+        if not reservations:
+            return []
+        for reservation in reservations:
+            reservation.preorders = await self.preorder_repo.get_preorders(reservation_id=reservation.reservation_id)
+        return reservations

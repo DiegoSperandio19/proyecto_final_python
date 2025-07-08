@@ -19,3 +19,10 @@ class PreorderListOut(BaseModel):
     id_user: UUID
     id_table: UUID
     list_preorders: list[PreorderOut]
+
+class PreorderReservationOut(BaseModel):
+    id_preorder: UUID
+    id_dish: UUID | None = None
+    dish_name: str
+    dish_description: str
+    n_dishes: int
