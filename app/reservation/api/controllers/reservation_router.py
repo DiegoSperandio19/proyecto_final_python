@@ -83,3 +83,10 @@ async def get_all_reservations(
     get_current_user: Annotated[User, Depends(require_admin_role)]
 ):
     return await get_reservation_service.get_all_reservations()
+
+@reservation_router.get("/active_reservations", status_code=status.HTTP_200_OK)
+async def get_active_reservations(
+    get_reservation_service: Annotated[ReservationService, Depends(get_reservation_service)],
+    get_current_user: Annotated[User, Depends(require_client_role)]
+):
+    return await get_reservation_service.get_active_reservations(get_current_user)

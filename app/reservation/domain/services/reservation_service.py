@@ -98,3 +98,11 @@ class ReservationService:
         for reservation in reservations:
             reservation.preorders = await self.preorder_repo.get_preorders(reservation_id=reservation.reservation_id)
         return reservations
+    
+    async def get_active_reservations(self, user: User):
+        reservations: List[ReservationIndividualOut] = await self.reservation_repo.get_active_reservations(user)
+        if not reservations:
+            return []
+        for reservation in reservations:
+            reservation.preorders = await self.preorder_repo.get_preorders(reservation_id=reservation.reservation_id)
+        return reservations

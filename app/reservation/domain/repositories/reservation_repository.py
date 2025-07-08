@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from datetime import date, datetime, time, timedelta
 from uuid import UUID
+from app.auth.domain.entities.user_entity import User
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.value_objects.reservation_dto import ReservationCreate
 
@@ -28,4 +29,8 @@ class ReservationRepository(ABC):
 
     @abstractmethod
     async def get_all_reservations(self):
+        pass
+
+    @abstractmethod
+    async def get_active_reservations(self, user: User):
         pass

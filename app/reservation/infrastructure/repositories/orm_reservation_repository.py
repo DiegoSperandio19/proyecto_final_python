@@ -3,6 +3,7 @@ from uuid import UUID
 from datetime import date, datetime, time, timedelta
 from sqlmodel import and_, or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
+from app.auth.domain.entities.user_entity import User
 from app.auth.infraestructure.orm_entities.user_model import UserModel
 from app.reservation.domain.entities.reservation_entity import Reservation
 from app.reservation.domain.repositories.reservation_repository import ReservationRepository
@@ -105,6 +106,33 @@ class SQLReservationRepository(ReservationRepository):
             return []
         reservations: List[ReservationIndividualOut] = []
         for reservation, user, table, restaurant in row:
+            res_out = ReservationIndividualOut(
+                reservation_id=reservation.id,
+                user_name=user.name,
+                table_id=table.id_table,
+                restaurant_name=restaurant.name,
+                restaurant_id=restaurant.id_restaurant,
+                start_time=reservation.start_time,
+                end_time=reservation.end_time,
+                reservation_date=reservation.reservation_date,
+                status=reservation.status
+            )
+            reservations.append(res_out)
+        return reservations
+    
+    async def get_active_reservations(self, user: User):
+        statement = select(ReservationModel, TableModel, RestaurantModel
+                        ).join(TableModel, ReservationModel.id_table==TableModel.id_table
+                        ).join(RestaurantModel, TableModel.id_restaurant==RestaurantModel.id_restaurant
+                        ).where(ReservationModel.is_eliminated==False
+                        ).where(ReservationModel.status=="Pending"
+                        ).where(ReservationModel.id_user==user.id)
+        result = await self.db.exec(statement)
+        row = result.all()
+        if not row:
+            return []
+        reservations: List[ReservationIndividualOut] = []
+        for reservation, table, restaurant in row:
             res_out = ReservationIndividualOut(
                 reservation_id=reservation.id,
                 user_name=user.name,
