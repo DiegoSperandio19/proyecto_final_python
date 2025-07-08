@@ -88,3 +88,5 @@ class ReservationService:
                     raise HourConflict("You can only cancel a reservation at least one hour before the start time")
         return await self.reservation_repo.change_status(reservation_id, "Cancelled")
         
+    async def get_all_reservations(self):
+        return await self.reservation_repo.get_all_reservations()

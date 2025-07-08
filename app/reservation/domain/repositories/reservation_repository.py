@@ -25,3 +25,7 @@ class ReservationRepository(ABC):
     @abstractmethod
     async def change_status(self, reservation_id: UUID, status:str) -> None | Reservation:
         pass
+
+    @abstractmethod
+    async def get_all_reservations(self):
+        pass

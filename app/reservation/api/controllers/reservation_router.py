@@ -74,3 +74,10 @@ async def cancel_reservation(
             detail=str(e)
         )
     return reservation
+
+@reservation_router.get("/all_reservations", status_code=status.HTTP_200_OK)
+async def get_all_reservations(
+    get_reservation_service: Annotated[ReservationService, Depends(get_reservation_service)],
+    get_current_user: Annotated[User, Depends(require_admin_role)]
+):
+    return await get_reservation_service.get_all_reservations()

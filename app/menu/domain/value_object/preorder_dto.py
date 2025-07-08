@@ -11,6 +11,7 @@ class PreorderCreate(BaseModel):
 
 class PreorderOut(BaseModel):
     id_preorder: UUID
+    id_dish: UUID | None = None
     n_dishes: int
 
 class PreorderListOut(BaseModel):
